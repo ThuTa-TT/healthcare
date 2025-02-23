@@ -1,4 +1,4 @@
-name: Deploy Sortal
+name: Deploy Healthcare
 
 on:
   workflow_dispatch:
