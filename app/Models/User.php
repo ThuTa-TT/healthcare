@@ -38,6 +38,12 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $appends = [
+        'is_super_admin',
+        'is_system_admin',
+        'is_doctor',
+    ];
+
     /**
      * Get the attributes that should be cast.
      *
@@ -51,6 +57,35 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Get the is system admin attribute.
+     *
+     * @return bool
+     */
+    public function getIsSuperAdminAttribute()
+    {
+        return ($this->role_id == 1) ? true : false;
+    }
+
+    /**
+     * Get the is system admin attribute.
+     *
+     * @return bool
+     */
+    public function getIsSystemAdminAttribute()
+    {
+        return ($this->role_id == 2)? true : false;
+    }
+
+    /**
+     * Get the is doctor attribute.
+     *
+     * @return bool
+     */
+    public function getIsDoctorAttribute()
+    {
+        return ($this->role_id == 3)? true : false;
+    }
     public function role()
     {
         return $this->belongsTo(Role::class);

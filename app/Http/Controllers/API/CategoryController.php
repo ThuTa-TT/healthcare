@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Services\CategoryService;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
-use App\Services\CategoryService;
 
 class CategoryController extends Controller
 {
     /**
-     * @var App\Services\CategoryService $categoryService
+     * @var App\Models\Category; $category
      */
-    protected $categoryService;
+    protected $category;
 
-    public function __construct(CategoryService $catgoryService)
+    public function __construct(Category $catgory)
     {
-        $this->categoryService = $catgoryService;
+        $this->category = $catgory;
     }
     /**
      * Display a listing of the resource.
@@ -24,7 +25,7 @@ class CategoryController extends Controller
     public function index()
     {
         try{
-            $categories = $this->categoryService->getAllCategories();
+            $categories = $this->category->all();
 
             $response['code'] = 200;
             $response['data'] = CategoryResource::collection($categories);
@@ -51,13 +52,14 @@ class CategoryController extends Controller
     {
         try{
             $data = $request->validate([
-                'name' => 'required|string'
+                'name' => 'required|string|unique:categories,name'
             ]);
 
-            $name = $data['name'];
-
-
-            $category = $this->categoryService->createCategory($name);
+            $name = strtolower(str_replace(' ', '', $data['name']));
+            
+            $category = $this->category->create([
+                'name' => $name
+            ]);
 
             $response['code'] = 201;
             $response['data'] = new CategoryResource($category);
@@ -72,11 +74,9 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Category $category)
     {
         try{
-            $category = $this->categoryService->getCategoryById($id);
-
             $response['code'] = 200;
             $response['data'] = new CategoryResource($category);
         }catch(\Exception $e){
@@ -98,16 +98,18 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Category $category)
     {
         try{
             $data = $request->validate([
-                'name' => 'required|string'
+                'name' => 'required|string|unique:categories,name'
             ]);
 
-            $name = $data['name'];
+            $name = strtolower(str_replace(' ', '', $data['name']));
 
-            $category = $this->categoryService->updateCategory($name, $id);
+            $category->update([
+                'name' => $name
+            ]);
 
             $response['code'] = 200;
             $response['data'] = new CategoryResource($category);
@@ -122,10 +124,10 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(category $category)
     {
         try{
-            $category = $this->categoryService->deleteCategory($id);
+            $category->delete();
 
             $response['code'] = 200;
             $response['message'] = 'Category deleted successfully';

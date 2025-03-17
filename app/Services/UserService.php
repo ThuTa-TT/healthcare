@@ -12,9 +12,15 @@ class UserService
      */
     protected $user;
 
-    public function __construct(User $user)
+    /**
+     * @var App\Services\DoctorService $doctorService
+    */
+    protected $doctorService; 
+
+    public function __construct(User $user, DoctorService $doctorService)
     {
         $this->user = $user;
+        $this->doctorService = $doctorService;
     }
 
     /**
@@ -55,6 +61,10 @@ class UserService
                 'phone_number' => $phone_number,
                 'role_id' => $role_id
             ]);
+
+            if($role_id == 3){
+                $this->doctorService->createDoctor($user->id);
+            }
 
             return $user;
         }catch(\Exception $e){

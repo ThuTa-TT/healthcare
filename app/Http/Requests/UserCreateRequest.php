@@ -21,7 +21,7 @@ class UserCreateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'name'=>'required|string',
             'email'=>'required|email|unique:users,email',
             'password'=>'required|string|min:8|confirmed',
@@ -30,7 +30,13 @@ class UserCreateRequest extends FormRequest
             'addresstwo' => 'nullable|string',
             'phone_number' => 'required|string',
             'role_id' => 'required|integer|exists:roles,id'
-
         ];
+
+        if (request('role_id') == 3) { // Assuming 2 is the doctor role_id
+            $rules['category_id'] = 'required|integer|exists:categories,id';
+        }
+
+        return $rules;
+
     }
 }

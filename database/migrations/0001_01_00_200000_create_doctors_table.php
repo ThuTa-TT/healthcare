@@ -13,17 +13,9 @@ return new class extends Migration
     {
         Schema::create('doctors', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->string('zip_code');
-            $table->string('address_one');
-            $table->string('address_two')->nullable();
-            $table->string('phone_number');
+            $table->foreignId('user_id')->constrained();
             $table->foreignId('category_id')->constrained();
             $table->string('bio')->nullable();
-            $table->foreignId('role_id');
             $table->timestamps();
             $table->softDeletes();
         });

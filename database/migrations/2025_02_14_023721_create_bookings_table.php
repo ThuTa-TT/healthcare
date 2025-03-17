@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignId('doctor_id')->constrained();
-            $table->foreignId('patient_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->foreignId('category_id')->constrained();
             $table->date('date');
             $table->time('time');
